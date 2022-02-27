@@ -18,8 +18,8 @@ class stack_pool{
   using size_type = typename std::vector<node_t>::size_type;
   stack_type free_nodes; 
   
-  node_t& node(stack_type x)  noexcept { return pool[x-1]; }
-  const node_t& node(stack_type x) const noexcept { return pool[x-1]; }
+  node_t& node(stack_type x)  noexcept { return pool.at(x-1); }
+  const node_t& node(stack_type x) const noexcept { return pool.at(x-1); }
 
   public:
   template <typename X>
@@ -127,9 +127,9 @@ class stack_pool{
   }
 
   stack_type pop(stack_type x){ // delete first node
-    auto head=pool[x-1].next;
+    auto head=next(x);
     /* updating free nodes */
-    pool[x-1].next=free_nodes;
+    next(x)=free_nodes;
     free_nodes=x;
     return head;
   } 
@@ -145,6 +145,12 @@ class stack_pool{
         ++it;
     }
     return end();
-  } 
+  }
+
+  void print_stack(const stack_type head) noexcept {
+    std::cout << "my head is: " << head << ", " << std::endl;
+    for (auto it = pool.cbegin(head); it != pool.cend(head); ++it) std::cout << it.print_ptr() << " and my value is: " << *it << std::endl;
+  }
+  
 };
 
