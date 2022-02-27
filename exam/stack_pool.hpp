@@ -43,6 +43,7 @@ class stack_pool{
   Iterator& operator++() {ptr= ptpool->at(ptr-1).next; return *this;} // prefix increment
   
   Iterator operator++(int) {auto tmp = *this; ++(*this); return tmp; } //postifx increment
+
   friend bool operator== (const Iterator& a, const Iterator& b) { return a.ptr == b.ptr; };
   friend bool operator!= (const Iterator& a, const Iterator& b) { return a.ptr != b.ptr; };     
 
@@ -65,25 +66,21 @@ class stack_pool{
     pool.reserve(n);
   }
         
-  stack_type new_stack(){ return end(); } // return an empty stack
+  stack_type new_stack() noexcept { return end(); } // return an empty stack
 
   // Vector handling
-  void reserve(size_type n) noexcept {pool.reserve(n);}; // reserve n nodes in the pool
+  void reserve(size_type n)  {pool.reserve(n);}; // reserve n nodes in the pool
   
   size_type capacity() const noexcept {return pool.capacity();}; // the capacity of the pool
   
   size_type size(){return pool.size();}
   
-  bool empty(stack_type x)  {
-    auto it = begin(x);
-    auto itend= end(x);
-    if(it==itend) return true;
-    else return false;
+  bool empty(stack_type x) noexcept { return begin(x)==end(x);
     }
   stack_type end() const noexcept { return stack_type(0); }
 
-  T& value(stack_type x) noexcept { return node(x).value;}
-  const T& value(stack_type x) const noexcept { return node(x).value;}
+  T& value(stack_type x)  { return node(x).value;}
+  const T& value(stack_type x) const  { return node(x).value;}
   
   stack_type& next(stack_type x){
     return node(x).next;
@@ -92,7 +89,7 @@ class stack_pool{
     return node(x).next;
   };
   
-  stack_type push(const T& val, stack_type head){ // pushing a node on top
+  stack_type push(const T& val, stack_type head) noexcept { // pushing a node on top
     node_t tmp;
     tmp.next=head;
     tmp.value=val;
@@ -110,7 +107,7 @@ class stack_pool{
     return head;
   }
 
-  stack_type push(T&& val, stack_type head){
+  stack_type push(T&& val, stack_type head) noexcept {
     node_t tmp;
     tmp.next=head;
     tmp.value= std::move(val);
